@@ -48,24 +48,28 @@ if(buttonStateRed==1){ //start game
 
 if(gameStart==true){ //if game has been started, run this
     if(buttonReady==false){ //if the game is not already running
-      delay(random(300,3000)*(2-(potVal+.5))); //set timer
-      digitalWrite(ledPinYellow, HIGH);   // turn on LED
-      Serial.println("Start");
-      buttonReady=true;  
-      time = millis();
-      ledStartTime = time;
+      if(buttonStateYellow==0){
+        delay(random(300,3000)*(2-(potVal+.5))); //set timer
+        delay(100);
+        digitalWrite(ledPinYellow, HIGH);   // turn on LED
+        Serial.println("Start");
+        time = millis();
+        ledStartTime = time;
+        buttonReady=true; 
+      }
     }
-  
+
   if(buttonReady == true){
     if(buttonStateYellow==1){
       Serial.print("Time: ");
       time = millis();
       reactionTime = time-ledStartTime;
       Serial.println(reactionTime);    //prints time since program started       
-      buttonReady=false;
       digitalWrite(ledPinYellow, LOW);
+      buttonReady=false;
+      delay(100); 
     }
-    delay(10); //comment
+    //delay(10); 
   }
 } 
   
