@@ -65,9 +65,9 @@ if(gameStart==true){ //if game has been started, run this
       buttonReady=false;
       digitalWrite(ledPinYellow, LOW);
     }
-    delay(10);
+    delay(10); //comment
   }
-}
+} 
   
   /*Serial.print(buttonStateYellow);            // print the potentimeter value
   Serial.print(buttonStateGreen);
