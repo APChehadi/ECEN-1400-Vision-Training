@@ -36,7 +36,7 @@ void setup() {
   pinMode(potPin, INPUT);
   Serial.begin(9600);
   Wire.begin(); // join i2c bus (address optional for master)
-
+  delay(700);
 }
 
 void loop() {
@@ -50,29 +50,31 @@ void loop() {
     time = millis();
     if (millis() - difficultyTime > 100) { //print difficulty if changed
       if (abs((potPrev - potVal) * 100) > 1) { //if difficulty changed more than 1%
+        tone(piezoPin, 165, buzzDuration/10);
         if (firstGame > 0) {
-          avgTime = (int)(playTime / turnCounter);
+          avgTime = (int)(playTime / turnCounter); //set avgTime
           avgTime = ((int)avgTime);
-          sendNum = ((int)(avgTime / 100));
-          Serial.println(sendNum);
-          Wire.beginTransmission(8); // transmit to device #8
+          sendNum = ((int)(avgTime / 100)); //format avgTime for 1 byte transfer
+          //Serial.println(sendNum);
+          Wire.beginTransmission(45); // transmit to device #8
           Wire.write(sendNum);       // sends average time in milliseconds
           Wire.endTransmission();    // stop transmitting
           delay(50);
-          sendNum = ((int)avgTime % 100);
+          sendNum = ((int)avgTime % 100); //format avgTime for 1 byte transfer
           sendNum = (int)sendNum;
-          Serial.println(sendNum);
-          Wire.beginTransmission(8); // transmit to device #8
+          //Serial.println(sendNum);
+          Wire.beginTransmission(45); // transmit to device #8
           Wire.write(sendNum);       // sends average time in milliseconds
           Wire.endTransmission();    // stop transmitting
-          Serial.println((String)"Average Time: " + avgTime + " ms"); //print difficulty
-          Serial.println((String)"Average Time: " + (int)avgTime + " ms"); //print difficulty
-          Serial.println("Resetting...");
+          //Serial.println((String)"Average Time: " + avgTime + " ms"); //print difficulty
+          //Serial.println((String)"Average Time: " + (int)avgTime + " ms"); //print difficulty
+          //Serial.println("Resetting...");
           delay(100);
-          software_Reset();
+          software_Reset(); //reset code
         }
         Serial.println((String)"Difficulty: " + (int)(potVal * 100) + "%"); //print difficulty
         Serial.println("Press all buttons to start");
+        tone(piezoPin, 523, buzzDuration);
       }
       difficultyTime = time;
       potPrev = potVal;
@@ -129,7 +131,8 @@ void loop() {
           digitalWrite(ledPinYellow, LOW); //turn off LED
           digitalWrite(ledPinGreen, LOW); //turn off LED
           digitalWrite(ledPinRed, LOW); //turn off LED
-          Serial.println("End Round");
+          //Serial.println("End Round");
+          tone(piezoPin, 131, buzzDuration);
           potPrev = -1;
           difficultyTime = 0;
           delay(100);
@@ -151,7 +154,8 @@ void loop() {
           digitalWrite(ledPinYellow, LOW); //turn off LED
           digitalWrite(ledPinGreen, LOW); //turn off LED
           digitalWrite(ledPinRed, LOW); //turn off LED
-          Serial.println("End Round");
+          //Serial.println("End Round");
+          tone(piezoPin, 131, buzzDuration);
           potPrev = -1;
           difficultyTime = 0;
           delay(100);
@@ -173,7 +177,8 @@ void loop() {
           digitalWrite(ledPinYellow, LOW); //turn off LED
           digitalWrite(ledPinGreen, LOW); //turn off LED
           digitalWrite(ledPinRed, LOW); //turn off LED
-          Serial.println("End Round");
+          //Serial.println("End Round");
+          tone(piezoPin, 131, buzzDuration);
           potPrev = -1;
           difficultyTime = 0;
           delay(100);
@@ -182,7 +187,7 @@ void loop() {
     }
   }
 }
-void software_Reset() // Restarts program from beginning but does not reset the peripherals and registers
+void software_Reset() // Restarts program
 {
   asm volatile ("  jmp 0");
 }
