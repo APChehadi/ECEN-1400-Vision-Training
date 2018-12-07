@@ -53,9 +53,11 @@ void loop() {
           Wire.beginTransmission(8); // transmit to device #8
           Wire.write((int)avgTime);       // sends average time in milliseconds
           Wire.endTransmission();    // stop transmitting
+          Serial.println((String)"Average Time: " + avgTime + " ms"); //print difficulty
+          Serial.println((String)"Average Time: " + (int)avgTime + " ms"); //print difficulty
           Serial.println("Resetting...");
-          software_Reset();
-          Serial.println((String)"Average Time: " + avgTime + " Seconds"); //print difficulty
+          delay(100);
+          software_Reset();  
         }
         Serial.println((String)"Difficulty: " + (int)(potVal * 100) + "%"); //print difficulty
         Serial.println("Press all buttons to start");
