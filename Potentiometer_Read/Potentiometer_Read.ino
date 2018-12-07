@@ -5,10 +5,10 @@
 #define butPinGreen 3
 #define butPinYellow 2
 unsigned long time;
-int buttonStateYellow = 0; //detect button state
-int buttonStateGreen = 0;
-int buttonStateRed = 0;
-int currentButton = 0;
+int buttonStateYellow = 1; //detect button state
+int buttonStateGreen = 1;
+int buttonStateRed = 1;
+int currentButton = 1;
 bool buttonReady = false; //if the game is running
 int ledStartTime;
 int reactionTime;
@@ -23,9 +23,9 @@ void setup() {
   pinMode(ledPinYellow, OUTPUT); //set inputs and outputs
   pinMode(ledPinGreen, OUTPUT);
   pinMode(ledPinRed, OUTPUT);
-  pinMode(butPinRed, INPUT);
-  pinMode(butPinYellow, INPUT);
-  pinMode(butPinGreen, INPUT);
+  pinMode(butPinRed, INPUT_PULLUP);
+  pinMode(butPinYellow, INPUT_PULLUP);
+  pinMode(butPinGreen, INPUT_PULLUP);
   pinMode(potPin, INPUT);
   Serial.begin(9600);
 }
@@ -46,19 +46,19 @@ void loop() {
     difficultyTime = time;
     potPrev = potVal;
   }
-  if (buttonStateRed == 1) { //start game
+  if (buttonStateRed == 0) { //start game
     gameStart = true;
     delay(10);
   }
 
   if (gameStart == true) { //if game has been started, run this
     if (buttonReady == false) { //if the game is not already running
-      if (buttonStateYellow == 0) {
-        if (buttonStateGreen == 0) {
-          if (buttonStateRed == 0) {
+      if (buttonStateYellow == 1) {
+        if (buttonStateGreen == 1) {
+          if (buttonStateRed == 1) {
             currentButton = random(0, 3);
             if (currentButton == 0) {
-              delay(random(300, 1000) * (11 - (10 * potVal) + .5)); //set timer
+              delay(random(100, 600) * (11 - (10 * potVal) + .5)); //set timer
               delay(10);
               digitalWrite(ledPinYellow, HIGH);   // turn on LED
               Serial.println("Start");
@@ -66,7 +66,7 @@ void loop() {
               ledStartTime = time;
               buttonReady = true;
             } else if (currentButton == 1) {
-              delay(random(300, 1000) * (11 - (10 * potVal) + .5)); //set timer
+              delay(random(100, 600) * (11 - (10 * potVal) + .5)); //set timer
               delay(10);
               digitalWrite(ledPinGreen, HIGH);   // turn on LED
               Serial.println("Start");
@@ -74,7 +74,7 @@ void loop() {
               ledStartTime = time;
               buttonReady = true;
             } else if (currentButton == 2) {
-              delay(random(300, 1000) * (11 - (10 * potVal) + .5)); //set timer
+              delay(random(100, 600) * (11 - (10 * potVal) + .5)); //set timer
               delay(10);
               digitalWrite(ledPinRed, HIGH);   // turn on LED
               Serial.println("Start");
@@ -87,7 +87,7 @@ void loop() {
       }
     }
     if (buttonReady == true) {
-      if (buttonStateYellow == 1) {
+      if (buttonStateYellow == 0) {
         if (currentButton == 0) {
           Serial.print("Time: ");
           time = millis();
@@ -107,7 +107,7 @@ void loop() {
           delay(10);
         }
       }
-      if (buttonStateGreen == 1) {
+      if (buttonStateGreen == 0) {
         if (currentButton == 1) {
           Serial.print("Time: ");
           time = millis();
@@ -127,7 +127,7 @@ void loop() {
           delay(10);
         }
       }
-      if (buttonStateRed == 1) {
+      if (buttonStateRed == 0) {
         if (currentButton == 2) {
           Serial.print("Time: ");
           time = millis();
