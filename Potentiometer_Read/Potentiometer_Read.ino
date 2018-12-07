@@ -4,6 +4,7 @@ int ledPinYellow = 5;
 int buttonStateGreen = 0;
 int ledPinGreen = 6;
 int buttonStateRed = 0;
+int ledPinRed = 7;
 int buttonStateBlack = 0;
 bool buttonReady = false; //if the game is running
 int ledStartTime;
