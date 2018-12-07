@@ -44,41 +44,44 @@ void loop() {
   potVal = analogRead(potPin);    // read the value from the sensor
   potVal = (potVal * (1.00 / 1023)); //modify potVal to be 0-1
 
-  time = millis();
-  if (millis() - difficultyTime > 100) { //print difficulty if changed
-    if (abs((potPrev - potVal) * 100) > 1) { //if difficulty changed more than 1%
-      if (firstGame > 0) {
-        avgTime = (playTime / turnCounter) / 1000;
-        Wire.beginTransmission(8); // transmit to device #8
-        Wire.write(avgTime);       // sends one byte
-        Wire.endTransmission();    // stop transmitting
-        Serial.println((String)"Average Time: " + avgTime + " Seconds"); //print difficulty
+  if (gameStart == false) {
+    time = millis();
+    if (millis() - difficultyTime > 100) { //print difficulty if changed
+      if (abs((potPrev - potVal) * 100) > 1) { //if difficulty changed more than 1%
+        if (firstGame > 0) {
+          avgTime = (playTime / turnCounter);
+          Wire.beginTransmission(8); // transmit to device #8
+          Wire.write((int)avgTime);       // sends average time in milliseconds
+          Wire.endTransmission();    // stop transmitting
+          Serial.println("Resetting...");
+          software_Reset();
+          Serial.println((String)"Average Time: " + avgTime + " Seconds"); //print difficulty
+        }
+        Serial.println((String)"Difficulty: " + (int)(potVal * 100) + "%"); //print difficulty
+        Serial.println("Press all buttons to start");
       }
-      Serial.println((String)"Difficulty: " + (int)(potVal * 100) + "%"); //print difficulty
-      Serial.println("Press all buttons to start");
+      difficultyTime = time;
+      potPrev = potVal;
     }
-    difficultyTime = time;
-    potPrev = potVal;
-  }
-  if (buttonStateRed == 0) { //start game
-    if (buttonStateGreen == 0) {
-      if (buttonStateYellow == 0) {
-        gameStart = true;
-        turnCounter = 0;
-        playTime = 0;
-        firstGame++;
-        delay(10);
+    if (buttonStateRed == 0) { //start game
+      if (buttonStateGreen == 0) {
+        if (buttonStateYellow == 0) {
+          gameStart = true;
+          turnCounter = 0;
+          playTime = 0;
+          firstGame++;
+          delay(10);
+        }
       }
     }
   }
-
   if (gameStart == true) { //if game has been started, run this
     if (buttonReady == false) { //if the game is not already running
       if (buttonStateYellow == 1) {
         if (buttonStateGreen == 1) {
           if (buttonStateRed == 1) {
             currentButton = random(0, 3);
-            delay(random(20, 300) * (11 - (10 * potVal) + .5)); //set timer
+            delay(random(20, 200) * (11 - (10 * potVal) + .5)); //set timer
             delay(10);
             time = millis();
             ledStartTime = time;
@@ -163,4 +166,8 @@ void loop() {
       }
     }
   }
+}
+void software_Reset() // Restarts program from beginning but does not reset the peripherals and registers
+{
+  asm volatile ("  jmp 0");
 }
