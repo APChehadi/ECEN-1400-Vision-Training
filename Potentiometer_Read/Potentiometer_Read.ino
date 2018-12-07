@@ -1,3 +1,5 @@
+#include <Wire.h>
+#define piezoPin 8
 #define ledPinRed 7
 #define ledPinGreen 6
 #define ledPinYellow 5
@@ -21,6 +23,7 @@ float avgTime = 0;
 float playTime = 0;
 float turnCounter = 0;
 int firstGame = 0;
+int buzzDuration = 500;
 
 void setup() {
   pinMode(ledPinYellow, OUTPUT); //set inputs and outputs
@@ -31,6 +34,7 @@ void setup() {
   pinMode(butPinGreen, INPUT_PULLUP);
   pinMode(potPin, INPUT);
   Serial.begin(9600);
+  Wire.begin(); // join i2c bus (address optional for master)
 }
 
 void loop() {
@@ -45,6 +49,9 @@ void loop() {
     if (abs((potPrev - potVal) * 100) > 1) { //if difficulty changed more than 1%
       if (firstGame > 0) {
         avgTime = (playTime / turnCounter) / 1000;
+        Wire.beginTransmission(8); // transmit to device #8
+        Wire.write(avgTime);       // sends one byte
+        Wire.endTransmission();    // stop transmitting
         Serial.println((String)"Average Time: " + avgTime + " Seconds"); //print difficulty
       }
       Serial.println((String)"Difficulty: " + (int)(potVal * 100) + "%"); //print difficulty
@@ -94,6 +101,7 @@ void loop() {
           reactionTime = time - ledStartTime;
           digitalWrite(ledPinYellow, LOW);
           buttonReady = false;
+          tone(piezoPin, 392, buzzDuration);
           turnCounter++;
           playTime = playTime + reactionTime;
           delay(100);
@@ -115,6 +123,7 @@ void loop() {
           reactionTime = time - ledStartTime;
           digitalWrite(ledPinGreen, LOW);
           buttonReady = false;
+          tone(piezoPin, 329, buzzDuration);
           turnCounter++;
           playTime = playTime + reactionTime;
           delay(100);
@@ -136,6 +145,7 @@ void loop() {
           reactionTime = time - ledStartTime;
           digitalWrite(ledPinRed, LOW);
           buttonReady = false;
+          tone(piezoPin, 261, buzzDuration);
           turnCounter++;
           playTime = playTime + reactionTime;
           delay(100);
