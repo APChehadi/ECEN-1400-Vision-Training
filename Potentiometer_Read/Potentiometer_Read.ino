@@ -1,10 +1,13 @@
+#define ledPinYellow 5
+#define ledPinGreen 6
+#define ledPinRed 7
+#define butPinRed 4
+#define butPinGreen 3
+#define butPinYellow 2
 unsigned long time;
 int buttonStateYellow = 0; //detect button state
-int ledPinYellow = 5;
 int buttonStateGreen = 0;
-int ledPinGreen = 6;
 int buttonStateRed = 0;
-int ledPinRed = 7;
 int buttonStateBlack = 0;
 bool buttonReady = false; //if the game is running
 int ledStartTime;
@@ -20,18 +23,19 @@ int difficultyTime=0;
 void setup() {
   pinMode(ledPinYellow,OUTPUT); //set inputs and outputs
   pinMode(ledPinGreen,OUTPUT); 
-  pinMode(2,INPUT);
-  pinMode(3,INPUT);
-  pinMode(4,INPUT);
+  pinMode(ledPinRed,OUTPUT);
+  pinMode(butPinRed,INPUT);
+  pinMode(butPinYellow,INPUT);
+  pinMode(butPinGreen,INPUT);
   pinMode(potPin, INPUT);
   Serial.begin(9600);
 }
 
 void loop() {
-  buttonStateYellow = digitalRead(2); //set button pins
-  buttonStateGreen = digitalRead(3);
-  buttonStateRed = digitalRead(4);
-  buttonStateBlack = digitalRead(6);
+  buttonStateYellow = digitalRead(butPinYellow); //set button pins
+  buttonStateGreen = digitalRead(butPinGreen);
+  buttonStateRed = digitalRead(butPinRed);
+  buttonStateBlack = digitalRead(8);
   potVal = analogRead(potPin);    // read the value from the sensor
   potVal = (potVal*(1.00/1023)); //modify potVal to be 0-1
   
@@ -46,9 +50,8 @@ void loop() {
     }
 if(buttonStateRed==1){ //start game
   gameStart=true;
-  delay(100);
+  delay(10);
 }
-
 
 if(gameStart==true){ //if game has been started, run this
     if(buttonReady==false){ //if the game is not already running
@@ -57,7 +60,7 @@ if(gameStart==true){ //if game has been started, run this
           if(buttonStateRed==0){
             if(random(0,2)==0){
               delay(random(300,3000)*(2-(potVal+.5))); //set timer
-              delay(100);
+              delay(10);
               digitalWrite(ledPinYellow, HIGH);   // turn on LED
               Serial.println("Start");
               time = millis();
@@ -65,7 +68,7 @@ if(gameStart==true){ //if game has been started, run this
               buttonReady=true; 
             }else{
               delay(random(300,3000)*(2-(potVal+.5))); //set timer
-              delay(100);
+              delay(10);
               digitalWrite(ledPinGreen, HIGH);   // turn on LED
               Serial.println("Start");
               time = millis();
@@ -84,7 +87,7 @@ if(gameStart==true){ //if game has been started, run this
       digitalWrite(ledPinGreen, LOW); //turn off LED
       Serial.println("End Round");
       potPrev = -1;
-      delay(100);
+      delay(10);
     }
     if(buttonStateYellow==1){
       Serial.print("Time: ");
@@ -102,7 +105,7 @@ if(gameStart==true){ //if game has been started, run this
       Serial.println(reactionTime);    //prints time since program started       
       digitalWrite(ledPinGreen, LOW);
       buttonReady=false;
-      delay(100); 
+      delay(10); 
     }
     //delay(10); 
   }
