@@ -4,6 +4,7 @@ int ledPinYellow = 5;
 int buttonStateGreen = 0;
 int ledPinGreen = 6;
 int buttonStateRed = 0;
+int ledPinRed = 7;
 int buttonStateBlack = 0;
 bool buttonReady = false; //if the game is running
 int ledStartTime;
@@ -19,6 +20,7 @@ int difficultyTime=0;
 void setup() {
   pinMode(ledPinYellow,OUTPUT); //set inputs and outputs
   pinMode(ledPinGreen,OUTPUT); 
+  pinMode(ledPinRed,OUTPUT); 
   pinMode(2,INPUT_PULLUP);
   pinMode(3,INPUT_PULLUP);
   pinMode(4,INPUT_PULLUP);
@@ -30,7 +32,6 @@ void loop() {
   buttonStateYellow = digitalRead(2); //set button pins
   buttonStateGreen = digitalRead(3);
   buttonStateRed = digitalRead(4);
-  buttonStateBlack = digitalRead(6);
   potVal = analogRead(potPin);    // read the value from the sensor
   potVal = (potVal*(1.00/1023)); //modify potVal to be 0-1
   
