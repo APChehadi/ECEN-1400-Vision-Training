@@ -24,6 +24,7 @@ float playTime = 0;
 float turnCounter = 0;
 int firstGame = 0;
 int buzzDuration = 500;
+int sendNum = 0;
 
 void setup() {
   pinMode(ledPinYellow, OUTPUT); //set inputs and outputs
@@ -35,6 +36,7 @@ void setup() {
   pinMode(potPin, INPUT);
   Serial.begin(9600);
   Wire.begin(); // join i2c bus (address optional for master)
+
 }
 
 void loop() {
@@ -49,15 +51,25 @@ void loop() {
     if (millis() - difficultyTime > 100) { //print difficulty if changed
       if (abs((potPrev - potVal) * 100) > 1) { //if difficulty changed more than 1%
         if (firstGame > 0) {
-          avgTime = (playTime / turnCounter);
+          avgTime = (int)(playTime / turnCounter);
+          avgTime = ((int)avgTime);
+          sendNum = ((int)(avgTime / 100));
+          Serial.println(sendNum);
           Wire.beginTransmission(8); // transmit to device #8
-          Wire.write((int)avgTime);       // sends average time in milliseconds
+          Wire.write(sendNum);       // sends average time in milliseconds
+          Wire.endTransmission();    // stop transmitting
+          delay(50);
+          sendNum = ((int)avgTime % 100);
+          sendNum = (int)sendNum;
+          Serial.println(sendNum);
+          Wire.beginTransmission(8); // transmit to device #8
+          Wire.write(sendNum);       // sends average time in milliseconds
           Wire.endTransmission();    // stop transmitting
           Serial.println((String)"Average Time: " + avgTime + " ms"); //print difficulty
           Serial.println((String)"Average Time: " + (int)avgTime + " ms"); //print difficulty
           Serial.println("Resetting...");
           delay(100);
-          software_Reset();  
+          software_Reset();
         }
         Serial.println((String)"Difficulty: " + (int)(potVal * 100) + "%"); //print difficulty
         Serial.println("Press all buttons to start");
@@ -82,8 +94,9 @@ void loop() {
       if (buttonStateYellow == 1) {
         if (buttonStateGreen == 1) {
           if (buttonStateRed == 1) {
+            randomSeed(millis());
             currentButton = random(0, 3);
-            delay(random(20, 200) * (11 - (10 * potVal) + .5)); //set timer
+            delay(random(10, 100) * (11 - (10 * potVal) + .5)); //set timer
             delay(10);
             time = millis();
             ledStartTime = time;
