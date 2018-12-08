@@ -79,7 +79,7 @@ void loop() {
       difficultyTime = time;
       potPrev = potVal;
     }
-    if (buttonStateRed == 0) { //start game
+    if (buttonStateRed == 0) { //start game if all buttons are down
       if (buttonStateGreen == 0) {
         if (buttonStateYellow == 0) {
           gameStart = true;
@@ -93,7 +93,7 @@ void loop() {
   }
   if (gameStart == true) { //if game has been started, run this
     if (buttonReady == false) { //if the game is not already running
-      if (buttonStateYellow == 1) {
+      if (buttonStateYellow == 1) { //if no buttons are being pressed
         if (buttonStateGreen == 1) {
           if (buttonStateRed == 1) {
             randomSeed(millis());
